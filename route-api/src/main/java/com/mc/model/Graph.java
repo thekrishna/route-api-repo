@@ -1,5 +1,7 @@
 package com.mc.model;
 
+import static com.mc.util.Constants.ORIGIN_DESTINATION_CONNECTED;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -10,16 +12,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
-
-import com.mc.exception.ApiException;
-import com.mc.exception.ExceptionType;
-
-/**
- * @author KrishnaKumar
- *
- */
-import static com.mc.util.Constants.SOURCE_DESTINATION_CANNOT_BE_SAME;
-import static com.mc.util.Constants.SOURCE_DESTINATION_CONNECTED;
 
 public class Graph {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Graph.class);
@@ -33,10 +25,6 @@ public class Graph {
 	}
 
 	public void addEdge(final String source, final String destination) {
-		if (source.equals(destination)) {
-			final String error = String.format(SOURCE_DESTINATION_CANNOT_BE_SAME, source, destination);
-			throw new ApiException(error, ExceptionType.BAD_REQUEST);
-		}
 		this.sourceNode = new Vertex(source);
 		this.destinationNode = new Vertex(destination);
 		if (!adjVertices.containsKey(sourceNode)) {
@@ -62,7 +50,7 @@ public class Graph {
 			LOGGER.info("Visited node with value: {}", currentNode.label);
 
 			if (currentNode.label.equals(destination)) {
-				LOGGER.info(String.format(SOURCE_DESTINATION_CONNECTED, source, destination));
+				LOGGER.info(String.format(ORIGIN_DESTINATION_CONNECTED, source, destination));
 				return true;
 			} else {
 				alreadyVisited.add(currentNode);
@@ -80,7 +68,7 @@ public class Graph {
 				addEdge(route[0].trim(), route[1].trim());
 			}
 		});
-		adjVertices.entrySet().stream().forEach(vertex -> System.out.println(vertex));
+		adjVertices.entrySet().stream().forEach(vertex -> LOGGER.info(vertex.toString()));
 		return this;
 	}
 

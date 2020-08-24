@@ -1,5 +1,7 @@
 package com.mc.controller;
 
+import static com.mc.util.Constants.NO;
+import static com.mc.util.Constants.YES;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -20,14 +22,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.mc.exception.ApiException;
 import com.mc.exception.ApiExceptionHandler;
-import com.mc.exception.ExceptionType;
 import com.mc.service.RouteService;
-
-import static com.mc.util.Constants.YES;
-import static com.mc.util.Constants.NO;
-import static com.mc.util.Constants.SOURCE_DESTINATION_CANNOT_BE_SAME;
 
 @WebMvcTest(controllers = RouteApiController.class)
 public class RouteApiControllerTest {
@@ -76,16 +72,10 @@ public class RouteApiControllerTest {
 	@Test
 	public void whenOriginAndDestinationEqualThenThrowBadRequest400() throws Exception {
 		final String source = "Boston";
-		final String destination = "Albany";
-
-		final String error = String.format(SOURCE_DESTINATION_CANNOT_BE_SAME, source, destination);
-		final ApiException apiException = new ApiException(error, ExceptionType.BAD_REQUEST);
-
-		when(routeService.isConnected(any(String.class), any(String.class))).thenThrow(apiException);
+		final String destination = "Boston";
 
 		mockMvc.perform(get(GET_CONNECTED_URI).param("origin", source).param("destination", destination)
 				.contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)).andDo(print()).andExpect(status().isBadRequest());
 
-		verify(routeService).isConnected(any(String.class), any(String.class));
 	}
 }
